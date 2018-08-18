@@ -1,7 +1,7 @@
 class Logger {
   constructor() {
     this.el = document.createElement("pre");
-    document.appendChild(this.el);
+    document.body.appendChild(this.el);
   }
 
   log(log) {
@@ -37,7 +37,7 @@ class MessageClient {
 class SmileView {
   constructor() {
     this.el = document.createElement("div");
-    this.el.style.position = "relative";
+    this.el.style.position = "absolute";
     this.el.style.top = 0;
     this.el.style.bottom = 0;
     this.el.style.right = 0;
@@ -53,7 +53,13 @@ class SmileView {
   }
 
   update() {
-    this.items.forEach(item => item.move(-5));
+    this.items.forEach(item => {
+      item.move(-5);
+      if (item.isDestroyed()) {
+        this.el.removeChild(item.el);
+      }
+    });
+    this.items = this.items.filter(item => !item.isDestroyed());
   }
 }
 
@@ -79,6 +85,10 @@ class SmileItem {
   updateTransform() {
     this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
   }
+
+  isDestroyed() {
+    return this.x <= 0;
+  }
 }
 
 class MessageSender {
@@ -102,7 +112,7 @@ class MessageSender {
   }
 }
 
-function main() {
+(function() {
   const client = new MessageClient();
   const view = new SmileView();
   const sender = new MessageSender();
@@ -113,6 +123,4 @@ function main() {
     requestAnimationFrame(loop);
   }
   loop();
-}
-
-main();
+})();

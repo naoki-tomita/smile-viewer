@@ -5,5 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "websocket": "^1.0.26"
+  },
+  "scripts": {
+    "start": "node ./index.js"
   }
 }

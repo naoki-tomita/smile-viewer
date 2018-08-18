@@ -13,12 +13,9 @@ function createWindow () {
     transparent: true,
     resizable: false,
     alwaysOnTop: true,
-    titleBarStyle: "hidden",
-    fullscreen: true,
-    fullscreenWindowTitle: false,
   });
   win.setIgnoreMouseEvents(true);
-  // win.maximize();
+  win.maximize();
   win.loadFile(join(__dirname, "./index.html"));
 }
 
