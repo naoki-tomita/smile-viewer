@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-    "electron": "^3.0.0-beta.4"
+  "devDependencies": {
+    "electron": "^3.0.0-beta.4",
+    "electron-packager": "^12.1.1"
   },
   "scripts": {
-    "start": "electron ./app.js"
+    "start": "electron ./index.js",
+    "release": "electron-packager ./ --darwin --overwrite --out release"
   }
 }
