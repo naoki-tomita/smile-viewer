@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+
 class Logger {
   constructor() {
     this.el = document.createElement("pre");
@@ -10,28 +12,12 @@ class Logger {
 }
 
 class MessageClient {
-  constructor() {
-    this.ws = new WebSocket('ws://localhost:8080/');
-  }
-  onOpen(cb) {
-    this.ws.addEventListener("open", cb);
-  }
-
-  onError(cb) {
-    this.ws.addEventListener("error", cb);
-  }
-
-  onMessage(cb) {
-    this.ws.addEventListener("message", cb);
-  }
-
-  onClose(cb) {
-    this.ws.addEventListener("close", cb);
-  }
-
-  send(msg) {
-    this.ws.send(msg);
-  }
+  constructor() { this.ws = new WebSocket('ws://localhost:8080/'); }
+  onOpen(cb) { this.ws.addEventListener("open", cb); }
+  onError(cb) { this.ws.addEventListener("error", cb); }
+  onMessage(cb) { this.ws.addEventListener("message", cb); }
+  onClose(cb) { this.ws.addEventListener("close", cb); }
+  send(msg) { this.ws.send(msg); }
 }
 
 class SmileView {
@@ -54,7 +40,7 @@ class SmileView {
 
   update() {
     this.items.forEach(item => {
-      item.move(-5);
+      item.move(-8);
       if (item.isDestroyed()) {
         this.el.removeChild(item.el);
       }
@@ -63,22 +49,47 @@ class SmileView {
   }
 }
 
+function getTextWidth(text) {
+  const tmp = document.createElement("span");
+  tmp.innerText = text;
+  tmp.style.fontSize = "72px";
+  tmp.style.visibility = 'hidden';
+  document.body.appendChild(tmp);
+  const width = tmp.offsetWidth;
+  document.body.removeChild(tmp);
+  return width;
+}
+
 class SmileItem {
   constructor(text) {
     this.el = document.createElement("div");
     this.x = window.innerWidth;
-    this.y = Math.random() * (window.innerHeight - 32);
+    this.y = Math.random() * (window.innerHeight - 72);
     this.el.style.position = "absolute";
-    this.el.style.fontSize = "32px";
-    this.el.style.color = "black";
-    this.el.style.textShadow = `1px 1px 0 white, -1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white`;
-    this.el.innerText = text;
+    this.width = getTextWidth(text);
+    this.el.innerHTML = this.createHtml(text, this.width);
     this.updateTransform();
   }
 
+  createHtml(text, width) {
+    return `
+      <svg width="${width + 30}">
+        <text
+          x="15" y="72"
+          stroke-width="15px"
+          stroke-linejoin="round"
+          paint-order="stroke"
+          style="font-size: 72px; stroke: white; fill: black;"
+        >
+          ${text}
+        </text>
+      </svg>
+    `;
+  }
+
   move(dx, dy) {
-    this.x = this.x > 0 ? this.x + (dx || 0) : window.innerWidth;
-    this.y = this.y > 0 ? this.y + (dy || 0) : window.innerHeight;
+    this.x = this.x + (dx || 0);
+    this.y = this.y + (dy || 0);
     this.updateTransform();
   }
 
@@ -87,7 +98,7 @@ class SmileItem {
   }
 
   isDestroyed() {
-    return this.x <= 0;
+    return this.x <= -this.width;
   }
 }
 
@@ -110,17 +121,31 @@ class MessageSender {
   onSend(cb) {
     this.cb = cb;
   }
+
+  focus() {
+    this.el.style.display = "inline";
+    this.el.focus();
+  }
+
+  blur() {
+    this.el.style.display = "none";
+  }
 }
 
 (function() {
   const client = new MessageClient();
   const view = new SmileView();
   const sender = new MessageSender();
+
   client.onMessage(e => view.smile(e.data));
   sender.onSend(m => client.send(m));
+
+  ipcRenderer.on("focus", () => sender.focus());
+  ipcRenderer.on("blur", () => sender.blur());
+
   function loop() {
     view.update();
     requestAnimationFrame(loop);
   }
-  loop();
+  requestAnimationFrame(loop);
 })();
