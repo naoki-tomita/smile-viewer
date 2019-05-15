@@ -12,7 +12,7 @@ class Logger {
 }
 
 class MessageClient {
-  constructor() { this.ws = new WebSocket('ws://localhost:8080/'); }
+  constructor() { this.ws = new WebSocket('ws://ws-smile-server.herokuapp.com'); }
   onOpen(cb) { this.ws.addEventListener("open", cb); }
   onError(cb) { this.ws.addEventListener("error", cb); }
   onMessage(cb) { this.ws.addEventListener("message", cb); }
