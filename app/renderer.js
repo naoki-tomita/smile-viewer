@@ -17,7 +17,7 @@ class MessageClient {
   onError(cb) { this.ws.addEventListener("error", cb); }
   onMessage(cb) { this.ws.addEventListener("message", cb); }
   onClose(cb) { this.ws.addEventListener("close", cb); }
-  send(msg) { this.ws.send(msg); }
+  smile(msg) { this.ws.send(msg); }
 }
 
 class SmileView {
@@ -138,7 +138,7 @@ class MessageSender {
   const sender = new MessageSender();
 
   client.onMessage(e => view.smile(e.data));
-  sender.onSend(m => client.send(m));
+  sender.onSend(m => client.smile(m));
 
   ipcRenderer.on("focus", () => sender.focus());
   ipcRenderer.on("blur", () => sender.blur());
