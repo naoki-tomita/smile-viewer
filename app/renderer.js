@@ -3,6 +3,8 @@ const { ipcRenderer } = require("electron");
 class Logger {
   constructor() {
     this.el = document.createElement("pre");
+    this.el.style.backgroundColor = "rgba(0, 0, 0, 0.1)";
+    this.el.style.color = "white";
     document.body.appendChild(this.el);
   }
 
@@ -11,13 +13,15 @@ class Logger {
   }
 }
 
+const logger = new Logger();
+
 class MessageClient {
   constructor() { this.ws = new WebSocket('ws://ws-smile-server.herokuapp.com'); }
   onOpen(cb) { this.ws.addEventListener("open", cb); }
   onError(cb) { this.ws.addEventListener("error", cb); }
   onMessage(cb) { this.ws.addEventListener("message", cb); }
   onClose(cb) { this.ws.addEventListener("close", cb); }
-  smile(msg) { this.ws.send(msg); }
+  smile(msg) { this.ws.send(msg); logger.log(msg); }
 }
 
 class SmileView {
@@ -49,15 +53,11 @@ class SmileView {
   }
 }
 
+const canvas = document.createElement("canvas");
 function getTextWidth(text) {
-  const tmp = document.createElement("span");
-  tmp.innerText = text;
-  tmp.style.fontSize = "72px";
-  tmp.style.visibility = 'hidden';
-  document.body.appendChild(tmp);
-  const width = tmp.offsetWidth;
-  document.body.removeChild(tmp);
-  return width;
+  const context = canvas.getContext("2d")
+  context.font = "72px sans-serif";
+  return context.measureText(text).width + 30;
 }
 
 class SmileItem {
@@ -73,13 +73,13 @@ class SmileItem {
 
   createHtml(text, width) {
     return `
-      <svg width="${width + 30}">
+      <svg width="${width}">
         <text
           x="15" y="72"
           stroke-width="15px"
           stroke-linejoin="round"
           paint-order="stroke"
-          style="font-size: 72px; stroke: white; fill: black;"
+          style="font: 72px sans-serif; stroke: white; fill: black;"
         >
           ${text}
         </text>

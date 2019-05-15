@@ -9,6 +9,9 @@
   },
   "scripts": {
     "start": "electron .",
-    "release": "electron-packager ./ --darwin --overwrite --out release"
+    "release": "docker build . -t electron-builder && docker run --rm -v $PWD/release:/src/release electron-builder",
+    "release:build": "npm run release:win32 && npm run release:mac",
+    "release:win32": "electron-packager . app-name --name=\"Smile Viewer\" --platform=win32 --arch=x64 --electronVersion=5.0.1 --out=release --overwrite",
+    "release:mac": "electron-packager . app-name --name=\"Smile Viewer\" --platform=darwin --arch=x64 --electronVersion=5.0.1 --out=release --overwrite"
   }
 }
