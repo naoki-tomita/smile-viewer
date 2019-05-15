@@ -7,6 +7,6 @@
     "websocket": "^1.0.26"
   },
   "scripts": {
-    "start": "node ./index.js"
+    "start": "PORT=8080 node ./index.js"
   }
 }
