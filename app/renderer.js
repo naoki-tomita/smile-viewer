@@ -13,15 +13,13 @@ class Logger {
   }
 }
 
-const logger = new Logger();
-
 class MessageClient {
   constructor() { this.ws = new WebSocket('ws://ws-smile-server.herokuapp.com'); }
   onOpen(cb) { this.ws.addEventListener("open", cb); }
   onError(cb) { this.ws.addEventListener("error", cb); }
   onMessage(cb) { this.ws.addEventListener("message", cb); }
   onClose(cb) { this.ws.addEventListener("close", cb); }
-  smile(msg) { this.ws.send(msg); logger.log(msg); }
+  smile(msg) { this.ws.send(msg); }
 }
 
 class SmileView {
