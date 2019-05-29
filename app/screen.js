@@ -13,15 +13,8 @@ class Logger {
   }
 }
 
-class MessageClient {
-  constructor() { this.ws = new WebSocket('ws://ws-smile-server.herokuapp.com'); }
-  onOpen(cb) { this.ws.addEventListener("open", cb); }
-  onError(cb) { this.ws.addEventListener("error", cb); }
-  onMessage(cb) { this.ws.addEventListener("message", cb); }
-  onClose(cb) { this.ws.addEventListener("close", cb); }
-  smile(msg) { this.ws.send(msg); }
-}
-
+const width = window.innerWidth;
+const differentialWidthPerSecond = width / 5;
 class SmileView {
   constructor() {
     this.el = document.createElement("div");
@@ -32,6 +25,7 @@ class SmileView {
     this.el.style.left = 0;
     document.body.appendChild(this.el);
     this.items = [];
+    this.lastTime = Date.now();
   }
 
   smile(text) {
@@ -41,13 +35,17 @@ class SmileView {
   }
 
   update() {
+    const now = Date.now();
+    const clearanceTime = now - this.lastTime;
+    const differentialOfPositionX = (clearanceTime / 1000) * differentialWidthPerSecond;
     this.items.forEach(item => {
-      item.move(-8);
+      item.move(-differentialOfPositionX);
       if (item.isDestroyed()) {
         this.el.removeChild(item.el);
       }
     });
     this.items = this.items.filter(item => !item.isDestroyed());
+    this.lastTime = now;
   }
 }
 
@@ -100,46 +98,9 @@ class SmileItem {
   }
 }
 
-class MessageSender {
-  constructor() {
-    this.el = document.createElement("input");
-    this.el.style.position = "absolute";
-    this.el.style.top = 0;
-    this.el.style.width = "100%";
-    this.el.addEventListener("keypress", e => {
-      if (e.keyCode === 13 && this.el.value) {
-        this.cb(this.el.value);
-        this.el.value = "";
-      }
-    });
-    document.body.appendChild(this.el);
-    this.el.focus();
-  }
-
-  onSend(cb) {
-    this.cb = cb;
-  }
-
-  focus() {
-    this.el.style.display = "inline";
-    this.el.focus();
-  }
-
-  blur() {
-    this.el.style.display = "none";
-  }
-}
-
 (function() {
-  const client = new MessageClient();
   const view = new SmileView();
-  const sender = new MessageSender();
-
-  client.onMessage(e => view.smile(e.data));
-  sender.onSend(m => client.smile(m));
-
-  ipcRenderer.on("focus", () => sender.focus());
-  ipcRenderer.on("blur", () => sender.blur());
+  ipcRenderer.on("message", (_, message) => view.smile(message));
 
   function loop() {
     view.update();
