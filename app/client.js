@@ -44,6 +44,10 @@ class MessageSender {
   blur() {
     this.input.style.display = "none";
   }
+
+  enabled() {
+    this.sendBtn.disabled = false;
+  }
 }
 
 (function() {

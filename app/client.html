@@ -5,27 +5,38 @@
   <title>Smile Client</title>
 </head>
 <style>
+  .flex {
+    margin: auto;
+    top: 0; bottom: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+  }
   input {
+    width: 100%;
     font-size: 20px;
     border-radius: 20px;
     outline: none;
     padding: 8px;
-    border: 1px solid #999;
+    border: 1px solid #bbb;
     box-shadow: 0 4px 4px #999;
   }
 
   button {
+    width: 80px;
     font-size: 20px;
     border-radius: 20px;
     outline: none;
     padding: 8px;
-    border: 1px solid #999;
+    margin-left: 16px;
+    border: 1px solid #bbb;
     box-shadow: 0 4px 4px #999;
   }
 </style>
 <body>
-  <input id="message" />
-  <button id="send">send</button>
+  <div class="flex">
+    <input id="message" />
+    <button id="send">send</button>
+  </div>
 </body>
 <script src="./client.js"></script>
 </html>

@@ -8,15 +8,10 @@ class MessageClient {
   onError(cb) { this.ws.on("error", cb); }
   onMessage(cb) { this.ws.on("message", cb); }
   onClose(cb) { this.ws.on("close", cb); }
-  smile(msg) {
-    this.ws.send(msg);
-  }
+  smile(msg) { this.ws.send(msg); }
 }
 
 const client = new MessageClient();
-client.onOpen(() => console.log("open"));
-client.onError(() => console.log("error"));
-client.onClose(() => console.log("close"));
 
 function createSmileWindow () {
   const { screen } = require("electron");
@@ -38,23 +33,24 @@ function createSmileWindow () {
   win.setIgnoreMouseEvents(true);
   win.maximize();
   win.loadFile(join(__dirname, "./screen.html"));
-  // win.webContents.openDevTools();
 
-  client.onMessage(message => {
-    win.webContents.send("message", message);
-  });
+  client.onMessage(message => win.webContents.send("message", message));
 }
 
 function createSmileClientWindow() {
   const win = new BrowserWindow({
     title: "smile client",
-    width: 300, height: 200,
+    width: 520, height: 88,
+    frame: true,
+    hasShadow: false,
+    transparent: true,
     webPreferences: {
       nodeIntegration: true,
     },
   });
   win.loadFile(join(__dirname, "./client.html"));
   ipcMain.on("message", (_, message) => client.smile(message));
+  // win.webContents.openDevTools();
 }
 
 app.on("ready", () => {

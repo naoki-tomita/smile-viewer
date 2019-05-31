@@ -9,4 +9,6 @@ RUN dpkg --add-architecture i386 && \
 WORKDIR /src
 ADD . /src
 
+RUN npm i
+
 CMD [ "npm", "run", "release:build" ]
