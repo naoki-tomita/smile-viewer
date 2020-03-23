@@ -3,7 +3,7 @@ const WebSocket = require("ws");
 const { join } = require("path");
 
 class MessageClient {
-  constructor() { this.ws = new WebSocket("ws://ws-smile-server.herokuapp.com"); }
+  constructor() { this.ws = new WebSocket(process.env.WS || "ws://ws-smile-server.herokuapp.com"); }
   onOpen(cb) { this.ws.on("open", cb); }
   onError(cb) { this.ws.on("error", cb); }
   onMessage(cb) { this.ws.on("message", cb); }
@@ -40,10 +40,11 @@ function createSmileWindow () {
 function createSmileClientWindow() {
   const win = new BrowserWindow({
     title: "smile client",
-    width: 520, height: 88,
+    width: 520, height: 72,
     frame: true,
     hasShadow: false,
-    transparent: true,
+    transparent: false,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -54,6 +55,6 @@ function createSmileClientWindow() {
 }
 
 app.on("ready", () => {
-  createSmileClientWindow();
+  // createSmileClientWindow();
   createSmileWindow();
 });

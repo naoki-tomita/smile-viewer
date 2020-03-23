@@ -2,9 +2,11 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 
 var server = http.createServer(function (request, response) {
-  console.log((new Date()) + ' Received request for ' + request.url);
-  response.writeHead(404);
   response.end();
+  const [_, queries] = request.url.split("?");
+  const query = queries.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: value }), {});
+  console.log("incoming message: " + query.q);
+  incomingMessage(query.q);
 });
 server.listen(process.env.PORT, function () {
   console.log(`${new Date()} Server is listening on port ${process.env.PORT}` );
@@ -47,3 +49,7 @@ wsServer.on('request', function (request) {
     console.log(`Connections: ${connections.length}`);
   });
 });
+
+function incomingMessage(message) {
+  connections.forEach(it => it.sendUTF(message));
+}
