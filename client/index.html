@@ -5,26 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <title>Smile Client</title>
-  <style>
-    .container {
-      width: 920px;
-      margin: auto;
-    }
-  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>😀</h1>
-    <!-- <form action="https://ws-smile-server.herokuapp.com" method="post"> -->
-    <label>message</label><input id="message" type="text" name="message">
-    <button id="btn" class="waves-effect waves-light btn">send</button>
+  <div class="container" style="padding-top: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="input-field" style="width: 100%;">
+        <input id="message" class="validate" type="text" name="message">
+        <label for="message">Message</label>
+      </div>
+      <button id="btn" class="waves-effect waves-light btn" style="width: 120px; margin-left: 8px">send</button>
+    </div>
   </div>
   <script>
-    btn.addEventListener("click", () => fetch(`https://ws-smile-server.herokuapp.com?q=${message.value}`, { mode: "no-cors" }));
+    function send() {
+      (message.value
+      && fetch(`https://ws-smile-server.herokuapp.com?q=${message.value}`, { mode: "no-cors" }))
+      // && fetch(`http://localhost:8080?q=${message.value}`, { mode: "no-cors" }))
+      message.value = "";
+    }
+    message.addEventListener("keypress", (e) => (e.key === "Enter") && send());
+    btn.addEventListener("click", send);
   </script>
 </body>
 </html>

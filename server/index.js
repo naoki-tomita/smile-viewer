@@ -4,7 +4,7 @@ var http = require('http');
 var server = http.createServer(function (request, response) {
   response.end();
   const [_, queries] = request.url.split("?");
-  const query = queries.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: value }), {});
+  const query = queries.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: decodeURIComponent(value) }), {});
   console.log("incoming message: " + query.q);
   incomingMessage(query.q);
 });

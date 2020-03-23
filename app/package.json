@@ -8,7 +8,7 @@
     "electron-packager": "^12.1.1"
   },
   "scripts": {
-    "start": "WS=ws://localhost:8080 electron .",
+    "start": "electron .",
     "release": "docker build . -t electron-builder && docker run --rm -v $PWD/release:/src/release electron-builder",
     "release:build": "npm run release:win32 && npm run release:mac",
     "release:win32": "electron-packager . \"Smile Viewer\" --name=\"Smile Viewer\" --platform=win32 --arch=x64 --electronVersion=5.0.1 --out=release --overwrite",
