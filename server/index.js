@@ -22,6 +22,7 @@ async function parseBody(request) {
 const server = http.createServer(async (request, response) => {
   const [_, queryString] = request.url.split("?");
   if (request.method.toLowerCase() === "get") {
+    response.end();
     const query = parseQueryString(queryString);
     console.log("incoming message: " + query.q);
     incomingMessage(query.q);
@@ -34,10 +35,10 @@ const server = http.createServer(async (request, response) => {
       response.end(JSON.stringify({ challenge: body.challenge }));
       return;
     }
+    response.end();
     console.log(body);
-    incomingMessage(body.text);
+    incomingMessage(body.event.text);
   }
-  response.end();
 });
 server.listen(process.env.PORT, () => {
   console.log(`${new Date()} Server is listening on port ${process.env.PORT}` );
