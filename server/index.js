@@ -27,6 +27,7 @@ const server = http.createServer(async (request, response) => {
     incomingMessage(query.q);
   } else if (request.method.toLowerCase() === "post") {
     const body = await parseBody(request);
+    console.log(body);
     if (body.type === "url_verification") {
       response.statusCode = 200;
       response.setHeader("content-type", "application/json");
