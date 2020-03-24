@@ -32,6 +32,11 @@ function createSmileWindow () {
   });
   win.setIgnoreMouseEvents(true);
   win.maximize();
+  app.dock.hide();
+  win.setAlwaysOnTop(true, "floating");
+  win.setVisibleOnAllWorkspaces(true);
+  win.setFullScreenable(false);
+  app.dock.show();
   win.loadFile(join(__dirname, "./screen.html"));
 
   client.onMessage(message => win.webContents.send("message", message));
