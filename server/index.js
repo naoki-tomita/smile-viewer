@@ -2,33 +2,43 @@ const WebSocketServer = require('websocket').server;
 const http = require('http');
 
 function incomingSlackWebhook(request) {
-  let data = "";
-  request.on("data", (chunk) => {
-    data += chunk;
-  });
-  request.on("end", () => {
-    console.log("incoming slack message: " + data);
-    incomingMessage(JSON.parse(data.text));
-    request.removeAllListeners();
-  });
+
 }
 
 function parseQueryString(queryString) {
-  return queryString.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: decodeURIComponent(value) }), {});
+  return queryString
+    .split("&").map(it => it.split("="))
+    .reduce((prev, [key, value]) => ({ ...prev, [key]: decodeURIComponent(value) }), {});
 }
 
-const server = http.createServer(function (request, response) {
+async function parseBody(request) {
+  return new Promise(ok => {
+    let data = "";
+    request.on("data", (chunk) => data += chunk);
+    request.on("end", () => (ok(JSON.parse(data)), request.removeAllListeners()));
+  });
+}
+
+const server = http.createServer(async (request, response) => {
   const [_, queryString] = request.url.split("?");
-  response.end();
   if (request.method.toLowerCase() === "get") {
     const query = parseQueryString(queryString);
     console.log("incoming message: " + query.q);
     incomingMessage(query.q);
   } else if (request.method.toLowerCase() === "post") {
-    incomingSlackWebhook(request);
+    const body = await parseBody(request);
+    if (body.type === "url_verification") {
+      response.statusCode = 200;
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ challenge: body.challenge }));
+      return;
+    }
+    console.log(body);
+    incomingMessage(body.text);
   }
+  response.end();
 });
-server.listen(process.env.PORT, function () {
+server.listen(process.env.PORT, () => {
   console.log(`${new Date()} Server is listening on port ${process.env.PORT}` );
 });
 
