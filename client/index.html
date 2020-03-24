@@ -26,8 +26,8 @@
   <script>
     function send() {
       (message.value
-      && fetch(`https://ws-smile-server.herokuapp.com?q=${message.value}`, { mode: "no-cors" }))
-      // && fetch(`http://localhost:8080?q=${message.value}`, { mode: "no-cors" }))
+      // && fetch(`https://ws-smile-server.herokuapp.com?q=${message.value}`, { mode: "no-cors" }))
+      && fetch(`http://localhost:8080?q=${message.value}`, { mode: "no-cors" }))
       message.value = "";
     }
     message.addEventListener("keypress", (e) => (e.key === "Enter") && send());

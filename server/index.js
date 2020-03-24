@@ -1,12 +1,32 @@
-var WebSocketServer = require('websocket').server;
-var http = require('http');
+const WebSocketServer = require('websocket').server;
+const http = require('http');
 
-var server = http.createServer(function (request, response) {
+function incomingSlackWebhook(request) {
+  let data = "";
+  request.on("data", (chunk) => {
+    data += chunk;
+  });
+  request.on("end", () => {
+    console.log("incoming slack message: " + data);
+    incomingMessage(JSON.parse(data.text));
+    request.removeAllListeners();
+  });
+}
+
+function parseQueryString(queryString) {
+  return queryString.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: decodeURIComponent(value) }), {});
+}
+
+const server = http.createServer(function (request, response) {
+  const [_, queryString] = request.url.split("?");
   response.end();
-  const [_, queries] = request.url.split("?");
-  const query = queries.split("&").map(it => it.split("=")).reduce((prev, [key, value]) => ({ ...prev, [key]: decodeURIComponent(value) }), {});
-  console.log("incoming message: " + query.q);
-  incomingMessage(query.q);
+  if (request.method.toLowerCase() === "get") {
+    const query = parseQueryString(queryString);
+    console.log("incoming message: " + query.q);
+    incomingMessage(query.q);
+  } else if (request.method.toLowerCase() === "post") {
+    incomingSlackWebhook(request);
+  }
 });
 server.listen(process.env.PORT, function () {
   console.log(`${new Date()} Server is listening on port ${process.env.PORT}` );

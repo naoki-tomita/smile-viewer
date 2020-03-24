@@ -17,14 +17,8 @@ class MessageSender {
   constructor() {
     this.input = document.getElementById("message");
     this.sendBtn = document.getElementById("send");
-    this.input.addEventListener("keypress", e => {
-      if (e.keyCode === 13 && this.input.value) {
-        this.send()
-      }
-    });
-    this.sendBtn.addEventListener("click", () => {
-      this.send();
-    });
+    this.input.addEventListener("keypress", e => e.keyCode === 13 && this.input.value && this.send());
+    this.sendBtn.addEventListener("click", () => this.send());
   }
 
   send() {

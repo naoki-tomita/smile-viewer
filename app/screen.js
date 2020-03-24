@@ -9,14 +9,17 @@ class Logger {
   }
 
   log(log) {
-    this.el.innerHTML += `${log}\n`;
+    this.el.innerText = `${log}\n${this.el.innerText}`.split("\n").slice(0, 30).join("\n");
   }
 }
 
+// const logger = new Logger();
+
 const width = window.innerWidth;
-const differentialWidthPerSecond = width / 5;
+const differentialWidthPerSecond = width / 3;
 class SmileView {
   constructor() {
+    /** @type {HTMLElement} */
     this.el = document.createElement("div");
     this.el.style.position = "absolute";
     this.el.style.top = 0;
@@ -24,7 +27,9 @@ class SmileView {
     this.el.style.right = 0;
     this.el.style.left = 0;
     document.body.appendChild(this.el);
+    /** @type {SmileItem[]} */
     this.items = [];
+    /** @type {number} */
     this.lastTime = Date.now();
   }
 
@@ -53,36 +58,41 @@ const canvas = document.createElement("canvas");
 function getTextWidth(text) {
   const context = canvas.getContext("2d")
   context.font = "72px sans-serif";
-  return context.measureText(text).width + 30;
+  return context.measureText(text).width;
 }
 
 class SmileItem {
-  constructor(text) {
+  constructor(text, color = "black", speed = "normal") {
     this.el = document.createElement("div");
     this.x = window.innerWidth;
     this.y = Math.random() * (window.innerHeight - 72);
     this.el.style.position = "absolute";
-    this.width = getTextWidth(text);
-    this.el.innerHTML = this.createHtml(text, this.width);
+    this.width = getTextWidth(text) + 30; // padding left, right: 30.
+    this.el.appendChild(this.createSmileElement(text, color, this.width));
     this.updateTransform();
   }
 
-  createHtml(text, width) {
-    return `
-      <svg width="${width}">
-        <text
-          x="15" y="72"
-          stroke-width="15px"
-          stroke-linejoin="round"
-          paint-order="stroke"
-          style="font: 72px sans-serif; stroke: white; fill: black;"
-        >
-          ${text}
-        </text>
-      </svg>
-    `;
+  createSmileElement(text, color, width) {
+    const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    textEl.append(text);
+    textEl.setAttribute("x", "15");
+    textEl.setAttribute("y", "72");
+    textEl.setAttribute("stroke-width", "15px");
+    textEl.setAttribute("stroke-linejoin", "round");
+    textEl.setAttribute("paint-order", "stroke");
+    textEl.style.font = "72px sans-serif";
+    textEl.style.stroke = "white";
+    textEl.style.fill = color;
+    svgEl.setAttribute("width", width);
+    svgEl.append(textEl);
+    return svgEl;
   }
 
+  /**
+   * @param {number} dx
+   * @param {number} dy
+   */
   move(dx, dy) {
     this.x = this.x + (dx || 0);
     this.y = this.y + (dy || 0);

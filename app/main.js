@@ -26,16 +26,14 @@ function createSmileWindow () {
     resizable: false,
     alwaysOnTop: true,
     hasShadow: false,
-    webPreferences: {
-      nodeIntegration: true,
-    },
+    webPreferences: { nodeIntegration: true },
   });
   win.setIgnoreMouseEvents(true);
   win.maximize();
   app.dock.hide();
   win.setAlwaysOnTop(true, "floating");
   win.setVisibleOnAllWorkspaces(true);
-  win.setFullScreenable(false);
+  win.fullScreenable = false;
   app.dock.show();
   win.loadFile(join(__dirname, "./screen.html"));
 
@@ -59,6 +57,7 @@ function createSmileClientWindow() {
   // win.webContents.openDevTools();
 }
 
+app.allowRendererProcessReuse = true;
 app.on("ready", () => {
   // createSmileClientWindow();
   createSmileWindow();
