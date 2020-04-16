@@ -17,13 +17,18 @@ async function parseBody(request) {
 
 const server = http.createServer(async (request, response) => {
   try {
+    // from web client.
     if (request.method.toLowerCase() === "get") {
       const [_, queryString] = request.url.split("?");
       const query = parseQueryString(queryString);
       console.log("incoming message: " + query.q);
       incomingMessage(query.q);
+
+    // from slack incoming hook.
     } else if (request.method.toLowerCase() === "post") {
       const body = await parseBody(request);
+
+      // when registering slack bot
       if (body.type === "url_verification") {
         response.statusCode = 200;
         response.setHeader("content-type", "application/json");
@@ -42,12 +47,15 @@ const server = http.createServer(async (request, response) => {
 
 server.listen(process.env.PORT);
 wsServer = new WebSocketServer({ httpServer: server, autoAcceptConnections: false });
-const connections = [];
+let connections = [];
 wsServer.on('request', function (request) {
   const connection = request.accept();
   connections.push(connection);
+  console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' connected.');
+  console.log(`Connections: ${connections.length}`);
+
   connection.on('close', () => {
-    connections.splice(connections.findIndex(con => connection.remoteAddress === con.remoteAddress), 1);
+    connections = connections.filter(it => it.remoteAddress !== connection.remoteAddress);
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
     console.log(`Connections: ${connections.length}`);
   });
