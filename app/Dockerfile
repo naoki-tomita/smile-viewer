@@ -10,6 +10,6 @@ RUN npm i -g electron-packager
 WORKDIR /src
 ADD . /src
 
-RUN npm i
+RUN yarn
 
-CMD [ "npm", "run", "release:build" ]
+CMD [ "yarn", "release:build" ]
