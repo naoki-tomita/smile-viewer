@@ -19,8 +19,8 @@ jobs:
         working-directory: app
       - run: yarn release
         working-directory: app
-      - run: zip -r mac.zip app/release/Smile-darwin-x64
-      - run: zip -r win.zip app/release/Smile-win32-x64
+      - run: zip -r mac.zip app/release/Smile-darwin-x64/*
+      - run: zip -r win.zip app/release/Smile-win32-x64/*
       - uses: actions/upload-artifact@v1.0.0
         name: Upload artifact for mac
         with:
