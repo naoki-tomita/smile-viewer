@@ -15,9 +15,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
+      - run: yarn
         working-directory: app
-      - run: npm release
+      - run: yarn release
         working-directory: app
       - uses: actions/upload-artifact@v1.0.0
         name: Upload artifact for mac
