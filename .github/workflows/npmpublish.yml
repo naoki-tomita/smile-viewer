@@ -17,14 +17,13 @@ jobs:
           node-version: 12
       - run: npm ci
       - run: npm release
-      - name: Upload artifact
       - uses: actions/upload-artifact@v1.0.0
+        name: Upload artifact for mac
         with:
-          # Artifact name
           name: mac
-          # Directory containing files to upload
           path: app/release/Smile-darwin-x64/*
       - uses: actions/upload-artifact@v1.0.0
+        name: Upload artifact for windows
         with:
           # Artifact name
           name: win32
