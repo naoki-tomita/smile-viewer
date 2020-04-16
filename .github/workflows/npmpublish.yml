@@ -16,7 +16,9 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
+        working-directory: app
       - run: npm release
+        working-directory: app
       - uses: actions/upload-artifact@v1.0.0
         name: Upload artifact for mac
         with:
