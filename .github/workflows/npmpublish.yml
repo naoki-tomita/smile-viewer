@@ -4,8 +4,9 @@
 name: Node.js Package
 
 on:
-  release:
-    types: [created, updated]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -21,15 +22,33 @@ jobs:
         working-directory: app
       - run: zip -r mac.zip app/release/Smile-darwin-x64/*
       - run: zip -r win.zip app/release/Smile-win32-x64/*
-      - uses: actions/upload-artifact@v1.0.0
-        name: Upload artifact for mac
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          name: mac
-          path: mac.zip
-      - uses: actions/upload-artifact@v1.0.0
-        name: Upload artifact for windows
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset-mac
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # Artifact name
-          name: win32
-          # Directory containing files to upload
-          path: win.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: mac.zip
+          asset_name: mac.zip
+          asset_content_type: application/zip
+      - name: Upload Release Asset
+        id: upload-release-asset-win
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: win.zip
+          asset_name: win.zip
+          asset_content_type: application/zip
