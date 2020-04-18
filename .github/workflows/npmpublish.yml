@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: mac.zip
+          asset_path: app/release/mac.zip
           asset_name: mac.zip
           asset_content_type: application/zip
       - name: Upload Release Asset
@@ -51,6 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: win.zip
+          asset_path: app/release/win.zip
           asset_name: win.zip
           asset_content_type: application/zip
