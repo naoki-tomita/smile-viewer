@@ -10,11 +10,11 @@
     "start": "electron .",
     "release": "docker build . -t electron-builder && docker run --rm -v $PWD/release:/src/release electron-builder",
     "release:build": "npm run release:win32 && npm run release:mac",
-    "release:win32": "electron-packager . \"Smile\" --name=\"Smile\" --platform=win32 --arch=x64 --electronVersion=8.1.1 --out=release --overwrite",
-    "release:mac": "electron-packager . \"Smile\" --name=\"Smile\" --platform=darwin --arch=x64 --electronVersion=8.1.1 --out=release --overwrite"
+    "release:win32": "electron-packager . \"Smile\" --name=\"Smile\" --platform=win32 --arch=x64 --electronVersion=8.2.2 --out=release --overwrite",
+    "release:mac": "electron-packager . \"Smile\" --name=\"Smile\" --platform=darwin --arch=x64 --electronVersion=8.2.2 --out=release --overwrite"
   },
   "dependencies": {
-    "electron": "8.1.1",
+    "electron": "8.2.2",
     "ws": "^7.0.0"
   }
 }
