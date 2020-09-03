@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require("electron");
 const WebSocket = require("ws");
 const { join } = require("path");
 
@@ -13,6 +13,15 @@ class Observable {
 
   emit(type, ...args) {
     this.cbs[type].forEach(it => it(...args));
+  }
+}
+
+const _console = global.console;
+let logger;
+const console = {
+  log(...params) {
+    logger?.webContents?.send("log", params.join(", "));
+    _console.log(...params);
   }
 }
 
@@ -40,7 +49,6 @@ class MessageClient extends Observable {
 }
 
 const client = new MessageClient();
-
 
 function createSmileWindow () {
   const { screen } = require("electron");
@@ -86,8 +94,27 @@ function createSmileClientWindow() {
   // win.webContents.openDevTools();
 }
 
+function createLoggerWindow() {
+  logger = new BrowserWindow({
+    width: 200, height: 400,
+    // frame: false,
+    hasShadow: false,
+    transparent: false,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+    }
+  });
+  logger.loadFile(join(__dirname, "./logger.html"));
+}
+
 app.allowRendererProcessReuse = true;
 app.on("ready", () => {
   // createSmileClientWindow();
   createSmileWindow();
+  // createLoggerWindow();
+
+  const tray = new Tray(join(__dirname, "./smile.png"));
+  tray.setToolTip('This is my application.')
+  tray.on("click", () => createLoggerWindow());
 });

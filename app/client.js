@@ -1,18 +1,5 @@
 const { ipcRenderer } = require("electron");
 
-class Logger {
-  constructor() {
-    this.el = document.createElement("pre");
-    this.el.style.backgroundColor = "rgba(0, 0, 0, 0.1)";
-    this.el.style.color = "white";
-    document.body.appendChild(this.el);
-  }
-
-  log(log) {
-    this.el.innerHTML += `${log}\n`;
-  }
-}
-
 class MessageSender {
   constructor() {
     this.input = document.getElementById("message");
