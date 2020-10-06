@@ -14,7 +14,7 @@
     "release:mac": "electron-packager . \"Smile\" --name=\"Smile\" --platform=darwin --arch=x64 --electronVersion=8.2.2 --out=release --overwrite"
   },
   "dependencies": {
-    "electron": "8.2.2",
+    "electron": "8.5.1",
     "ws": "^7.0.0"
   }
 }
